@@ -26,7 +26,9 @@ class KotlinSharp {
 
         val tokenizer = Tokenizer()
 
-        tokenizer.MakeThoseTokensTony(s)
+        val tokens = tokenizer.tokenizeMeCaptain(s)
+
+        var x = 1+2
     }
 
 }
