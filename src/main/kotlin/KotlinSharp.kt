@@ -8,6 +8,7 @@ class KotlinSharp {
         fun main(args: Array<String>) {
             println("Kotlin# 0.0.1")
             var fileLocation = "C:\\Users\\Scott\\Documents\\KotlinSharp\\build\\libs\\abc.xyz"
+            fileLocation = "abc.xyz"
             if (args.size > 0){
                 fileLocation = "./$args[0]"
                /// println("Please pass a file to build")

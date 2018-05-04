@@ -1,4 +1,6 @@
-class Token(val type: TokenType) {
+package com.mscottmcbee.kotlinsharp
+
+class Token(val type: TokenType):GrammarSymbol() {
 
     constructor(type: TokenType, data: String) : this(type){
         stringData = data
@@ -18,20 +20,4 @@ class Token(val type: TokenType) {
 
 
 
-}
-
-enum class TokenType{
-    IDENTIFIER,
-    SEMICOLON,
-    STRING,
-    NUMBER,
-    VAR,
-    EQUALS,
-    ASSIGNMENT,
-    READINT,
-    PRINT,
-    FOR,
-    TO,
-    DO,
-    END
 }

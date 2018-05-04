@@ -1,7 +1,5 @@
 package com.mscottmcbee.kotlinsharp
 
-import Token
-
 class Tokenizer {
 
     var index = 0
