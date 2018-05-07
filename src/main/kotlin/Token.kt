@@ -1,6 +1,8 @@
 package com.mscottmcbee.kotlinsharp
 
-class Token(val type: TokenType):GrammarSymbol() {
+import com.mscottmcbee.kotlinsharp.parsing.GrammarSymbol
+
+class Token(val type: TokenType): GrammarSymbol() {
 
     constructor(type: TokenType, data: String) : this(type){
         stringData = data
