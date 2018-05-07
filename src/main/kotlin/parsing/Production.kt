@@ -3,7 +3,7 @@ package com.mscottmcbee.kotlinsharp.parsing
 class Production(){
 
 
-    var symbols:List<GrammarSymbol> = ArrayList<GrammarSymbol>()
+    var symbols:ArrayList<GrammarSymbol> = ArrayList()
 
     val firstSymbol:GrammarSymbol
         get() = symbols[0]

@@ -2,11 +2,16 @@ package com.mscottmcbee.kotlinsharp.parsing
 
 class Grammar{
 
-    var productions: HashMap<GrammarSymbol,ArrayList<Production>> = HashMap()
+    var productions: ArrayList<Nonterminal> = ArrayList()
 
 
     fun getAllProductionsForNonterminal( nonterminal: Nonterminal): ArrayList<Production>?{
-        return productions[nonterminal]
+        for (nonterm in productions){
+            if (nonterminal.id == nonterm.id){
+                return nonterm.productions
+            }
+        }
+        return null
     }
 
 }

@@ -1,9 +1,7 @@
 package com.mscottmcbee.kotlinsharp.parsing
 
-class Nonterminal: GrammarSymbol(){
+class Nonterminal(val id:String): GrammarSymbol(){
 
-    var id:String = ""
-
-    var productions:List<Production> = ArrayList<Production>()
+    var productions:ArrayList<Production> = ArrayList()
 
 }
