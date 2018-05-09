@@ -184,11 +184,109 @@ class ToyLang {
             newGrammar.productions.add(it)
         }
 
+
+        var repeatingSemiNonterminal = Nonterminal("maybeSemi").also {
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(Token(TokenType.SEMICOLON))
+                it.productions.add(prod)
+            }
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(Token(TokenType.SEMICOLON))
+                prod.symbols.add(it)
+                it.productions.add(prod)
+            }
+
+
+            newGrammar.productions.add(it)
+        }
+
+
+        statementsNonterminal.also {
+            //:statement maybeSemi statements
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(statementNonterminal)
+                prod.symbols.add(repeatingSemiNonterminal)
+                prod.symbols.add(it)
+                it.productions.add(prod)
+            }
+            //:statement maybeSemi
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(statementNonterminal)
+                prod.symbols.add(repeatingSemiNonterminal)
+                it.productions.add(prod)
+            }
+            //:maybeSemi statement maybeSemi statements
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(repeatingSemiNonterminal)
+                prod.symbols.add(statementNonterminal)
+                prod.symbols.add(repeatingSemiNonterminal)
+                prod.symbols.add(it)
+                it.productions.add(prod)
+            }
+            //:maybeSemi statement maybeSemi
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(repeatingSemiNonterminal)
+                prod.symbols.add(statementNonterminal)
+                prod.symbols.add(repeatingSemiNonterminal)
+                it.productions.add(prod)
+            }
+            //:maybeSemi statement maybeSemi statements maybeSemi
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(repeatingSemiNonterminal)
+                prod.symbols.add(statementNonterminal)
+                prod.symbols.add(repeatingSemiNonterminal)
+                prod.symbols.add(it)
+                prod.symbols.add(repeatingSemiNonterminal)
+                it.productions.add(prod)
+            }
+            //:maybeSemi statement maybeSemi
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(repeatingSemiNonterminal)
+                prod.symbols.add(statementNonterminal)
+                prod.symbols.add(repeatingSemiNonterminal)
+                it.productions.add(prod)
+            }
+        }
+/*
+        statements
+        (used by block, functionLiteral)
+        : SEMI* statement{SEMI+} SEMI*
+        ;
+
+
+
+        statements'
+
+
+
+
+
+
+        maybeSemi
+        :SEMI
+        :SEMI maybeSemi
+
+
+
+
+  */
+
+
+
+
         statementsNonterminal.also {
 
         }
 
-
+        return newGrammar
 
     }
 
