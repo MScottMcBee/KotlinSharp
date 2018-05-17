@@ -13,5 +13,7 @@ enum class TokenType{
     FOR,
     TO,
     DO,
-    END
+    END,
+    ADD,
+    MUL
 }

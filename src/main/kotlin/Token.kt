@@ -22,4 +22,20 @@ class Token(val type: TokenType): GrammarSymbol() {
 
 
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Token
+
+        if (type != other.type) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return type.hashCode()
+    }
+
+
 }

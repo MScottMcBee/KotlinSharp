@@ -2,50 +2,104 @@ package com.mscottmcbee.kotlinsharp.parsing
 
 import com.mscottmcbee.kotlinsharp.Token
 
-class Parser(var tokens: List<Token>) {
+class Parser(var tokens: List<Token>, var grammar: Grammar) {
 
-    var states: Array<ArrayList<EarleyState>?> = arrayOfNulls<ArrayList<EarleyState>?>(tokens.size + 1)
+    var states: Array<ArrayList<Item>?> = arrayOfNulls<ArrayList<Item>?>(tokens.size+1)
+    var completed: HashMap<Production,ArrayList<Item>?>  = HashMap()
+
+
+    var sProd: Production? = null
+
+    var final: Item? = null
 
     fun parse(startProduction: Production) {
-        addState(EarleyState(startProduction,0,0),0)
+        addState(Item(startProduction,0,0),0)
 
-        for (i in 0 .. states.size ){
+        sProd = startProduction
+
+        for (i in 0 .. states.size-1 ){
             if (states[i] != null) {
                 var stateSet = states[i]!!
-                for (j in 0..stateSet.size) {
-                    if (!stateSet[j].isFinished()){
-                        var symbol = stateSet[j].getNextSymbol()
+                var j = 0
+                while( j < stateSet.size) {
+                    var item = stateSet[j]
+                    if (!item.isFinished()){
+                        var symbol = item.getNextSymbol()
                         if(symbol is Token){
-                            scanner()
+                            scanner(item, i)
                         }else{
-                            predictor()
+                            predictor(item, i)
                         }
                     }else{
-                        completer()
+                        completer(item, i)
+                    }
+                    j++
+                }
+
+            }
+        }
+        var g = 231+2;
+//return chart
+    }
+
+    private fun addState(item:Item, index:Int){
+        if (states[index] == null){
+            states[index] = ArrayList()
+        }
+        states[index]?.add(item)
+    }
+
+    private fun predictor(item: Item, k: Int){
+        var next = item.getNextSymbol() as Nonterminal
+        for (production in next.productions){
+
+            var newState = Item(production,0,item.originIndex)
+            if (!states[k]!!.contains(newState)){
+                addState(newState,k)
+            }
+        }
+        var x = 112+23
+    }
+
+    private fun scanner(item: Item, k: Int){
+        try {
+            if (item.getNextSymbol() == tokens[k]) {
+                var newState = Item(item.production, item.prodIndex + 1, item.originIndex)
+                newState.predPointer.add(item)
+                addState(newState, k + 1)
+            }
+        }catch (e:Exception){
+            var asd = 4356
+        }
+    }
+
+    private fun completer(completedItem: Item, k: Int){
+
+        if (completedItem.originIndex == k) {
+
+            if (completed[completedItem.production] == null){
+                completed[completedItem.production] = ArrayList()
+            }
+            completed[completedItem.production]?.add(completedItem)
+        }
+
+        if (completedItem.production == sProd){
+            final = completedItem
+        }
+
+
+
+        if (states[completedItem.originIndex] != null) {
+            for (item in states[completedItem.originIndex]!!){
+                if (item.getNextSymbol() == completedItem.production.firstSymbol){
+                    Item(item.production,item.prodIndex+1,item.originIndex).also {
+                      it.reducPointer.add(completedItem)
+                      it.predPointer.add(item)
+                      addState(it,k)
                     }
                 }
             }
         }
-//return chart
-    }
-
-    private fun addState(state:EarleyState, index:Int){
-        if (states[index] == null){
-            states[index] = ArrayList()
-        }
-        states[index]?.add(state)
-    }
-
-    private fun scanner(){
-
-    }
-
-    private fun predictor(){
-
-    }
-
-    private fun completer(){
-
     }
 
 

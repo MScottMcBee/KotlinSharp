@@ -1,8 +1,16 @@
 package com.mscottmcbee.kotlinsharp.parsing
 
-import sun.awt.Symbol
+import parsing.SPPFNode
 
-data class EarleyState(val production: Production, var prodIndex:Int, val originIndex:Int){
+data class Item(val production: Production, var prodIndex:Int, val originIndex:Int){
+
+    var sppfNode: SPPFNode? = null
+
+    var reducPointer: ArrayList<Item?> = ArrayList()
+
+    var predPointer: ArrayList<Item?> = ArrayList()
+
+    var threePointer: ArrayList<Item?> = ArrayList()
 
     fun isFinished():Boolean {
         return prodIndex >= production.symbols.count()-1
@@ -16,7 +24,7 @@ data class EarleyState(val production: Production, var prodIndex:Int, val origin
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as EarleyState
+        other as Item
 
         if (production != other.production)
             return false

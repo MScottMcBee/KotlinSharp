@@ -1,5 +1,6 @@
 package com.mscottmcbee.kotlinsharp
 
+import com.mscottmcbee.kotlinsharp.parsing.*
 import java.io.*
 
 class KotlinSharp {
@@ -8,7 +9,7 @@ class KotlinSharp {
         fun main(args: Array<String>) {
             println("Kotlin# 0.0.1")
             var fileLocation = "C:\\Users\\Scott\\Documents\\KotlinSharp\\build\\libs\\abc.xyz"
-            fileLocation = "abc.xyz"
+            fileLocation = "abcd.xyz"
             if (args.size > 0){
                 fileLocation = "./$args[0]"
                /// println("Please pass a file to build")
@@ -28,6 +29,12 @@ class KotlinSharp {
         val tokenizer = Tokenizer()
 
         val tokens = tokenizer.tokenizeMeCaptain(s)
+
+        var grammar: Grammar = ToyLang().getGrammar()
+
+        var parser:Parser = Parser(tokens, grammar)
+
+        parser.parse(grammar.getAllProductionsForNonterminal("START")?.get(0)!!)
 
         var x = 1+2
     }

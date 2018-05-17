@@ -47,6 +47,16 @@ class Tokenizer {
                 Token(TokenType.ASSIGNMENT)
             }
 
+            charArray[index] == '+' -> {
+                index++
+                Token(TokenType.ADD)
+            }
+
+            charArray[index] == '*' -> {
+                index++
+                Token(TokenType.MUL)
+            }
+
             charArray[index] == '"' -> {
                 stringBuilder = StringBuilder()
                 index++

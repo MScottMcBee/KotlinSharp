@@ -4,14 +4,17 @@ class Grammar{
 
     var productions: ArrayList<Nonterminal> = ArrayList()
 
-
-    fun getAllProductionsForNonterminal( nonterminal: Nonterminal): ArrayList<Production>?{
+    fun getAllProductionsForNonterminal( string:String): ArrayList<Production>?{
         for (nonterm in productions){
-            if (nonterminal.id == nonterm.id){
+            if (string == nonterm.id){
                 return nonterm.productions
             }
         }
         return null
+    }
+
+    fun getAllProductionsForNonterminal( nonterminal: Nonterminal): ArrayList<Production>? {
+        return getAllProductionsForNonterminal(nonterminal.id)
     }
 
 }

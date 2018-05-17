@@ -1,2 +1,7 @@
 package parsing
 
+class SPPFNode(){
+
+
+
+}

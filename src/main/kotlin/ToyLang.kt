@@ -94,10 +94,55 @@ class ToyLang {
             newGrammar.productions.add(it)
         }
 
+        var tNonterminal = Nonterminal("T").also {
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(Token(TokenType.NUMBER))
+                it.productions.add(prod)
+            }
+        }
+
+        var mulNonterminal = Nonterminal("MUL").also {
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(tNonterminal)
+                it.productions.add(prod)
+            }
+
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(it)
+                prod.symbols.add(Token(TokenType.MUL))
+                prod.symbols.add(tNonterminal)
+                it.productions.add(prod)
+            }
+        }
+
+        var addNonterminal = Nonterminal("ADD").also {
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(mulNonterminal)
+                it.productions.add(prod)
+            }
+
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(it)
+                prod.symbols.add(Token(TokenType.ADD))
+                prod.symbols.add(mulNonterminal)
+                it.productions.add(prod)
+            }
+        }
+
         var expressionNonterminal = Nonterminal("EXPRESSION").also {
             Production().also { prod ->
                 prod.symbols.add(it)
                 prod.symbols.add(atomicExpressionNonterminal)
+                it.productions.add(prod)
+            }
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(addNonterminal)
                 it.productions.add(prod)
             }
 
@@ -159,7 +204,7 @@ class ToyLang {
         }
 
         var statementNonterminal = Nonterminal("STATEMENT").also {
-            Production().also { prod ->
+           /* Production().also { prod ->
                 prod.symbols.add(it)
                 prod.symbols.add(declarationNonterminal)
                 it.productions.add(prod)
@@ -178,6 +223,11 @@ class ToyLang {
                 prod.symbols.add(it)
                 prod.symbols.add(forNonterminal)
                 it.productions.add(prod)
+            }*/
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(addNonterminal)
+                it.productions.add(prod)
             }
 
 
@@ -185,7 +235,7 @@ class ToyLang {
         }
 
 
-        var repeatingSemiNonterminal = Nonterminal("maybeSemi").also {
+        var repeatingSemiNonterminal = Nonterminal("MAYBESEMI").also {
             Production().also { prod ->
                 prod.symbols.add(it)
                 prod.symbols.add(Token(TokenType.SEMICOLON))
@@ -261,29 +311,22 @@ class ToyLang {
         : SEMI* statement{SEMI+} SEMI*
         ;
 
-
-
         statements'
-
-
-
-
-
 
         maybeSemi
         :SEMI
         :SEMI maybeSemi
 
-
-
-
   */
 
+        var startNonterminal = Nonterminal("START").also {
+            Production().also { prod ->
+                prod.symbols.add(it)
+                prod.symbols.add(addNonterminal)
+                it.productions.add(prod)
+            }
 
-
-
-        statementsNonterminal.also {
-
+            newGrammar.productions.add(it)
         }
 
         return newGrammar
