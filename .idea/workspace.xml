@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b09f0490-0505-4f9f-8ba9-5e2144195395" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abcd.xyz" beforeDir="false" afterPath="$PROJECT_DIR$/abcd.xyz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/TokenType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/TokenType.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Tokenizer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Tokenizer.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ToyLang.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ToyLang.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/parsing/Item.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/parsing/Item.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/parsing/LR0.kt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/parsing/Parser.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/parsing/Parser.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/parsing/Rule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/parsing/Rule.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/parsing/Set.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/parsing/Set.kt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -48,8 +39,8 @@
           <file leaf-file-name="Parser.kt" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/kotlin/parsing/Parser.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="167">
-                  <caret line="72" selection-start-line="72" selection-end-line="72" />
+                <state relative-caret-position="338">
+                  <caret line="82" column="9" lean-forward="true" selection-start-line="82" selection-start-column="9" selection-end-line="82" selection-end-column="9" />
                 </state>
               </provider>
             </entry>
@@ -155,7 +146,7 @@
             <entry file="file://$PROJECT_DIR$/abcd.xyz">
               <provider selected="true" editor-type-id="text-editor">
                 <state>
-                  <caret column="1" selection-end-column="9" />
+                  <caret column="10" lean-forward="true" selection-start-column="10" selection-end-column="10" />
                 </state>
               </provider>
             </entry>
@@ -580,8 +571,8 @@
         <option value="$PROJECT_DIR$/src/main/kotlin/ToyLang.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/parsing/Rule.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/parsing/Set.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/parsing/Parser.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/parsing/Item.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/parsing/Parser.kt" />
       </list>
     </option>
   </component>
@@ -796,6 +787,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="209" y="146" width="1511" height="982" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32881355" />
@@ -835,7 +827,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/src/main/kotlin/parsing/Parser.kt</url>
-          <line>72</line>
+          <line>84</line>
           <properties />
           <option name="timeStamp" value="49" />
         </line-breakpoint>
@@ -865,7 +857,7 @@
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>j &lt; stateSet.size</expression-string>
         <language-id>kotlin</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -1102,13 +1094,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/abcd.xyz">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="1" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/TokenType.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
@@ -1189,10 +1174,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/abcd.xyz">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="10" lean-forward="true" selection-start-column="10" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/parsing/Parser.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="72" selection-start-line="72" selection-end-line="72" />
+        <state relative-caret-position="338">
+          <caret line="82" column="9" lean-forward="true" selection-start-line="82" selection-start-column="9" selection-end-line="82" selection-end-column="9" />
         </state>
       </provider>
     </entry>

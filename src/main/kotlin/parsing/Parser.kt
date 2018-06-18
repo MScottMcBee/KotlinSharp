@@ -70,6 +70,18 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
 
        // var x:Item? = setN.idx[startRule.firstSymbol]!![set0]
 
+        var found = false
+        for (item:Item in S[S.size-1].items){
+            if (item.rule == startRule && item.nextSymbol() == null && item.setIndex == 0){
+                found = true
+                println("Finished Successfully!")
+                break
+            }
+        }
+        if (!found){
+            println("Could not parse :(")
+        }
+
         var g = 231 + 2
 
     }
