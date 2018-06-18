@@ -2,8 +2,7 @@ package com.mscottmcbee.kotlinsharp
 
 import com.mscottmcbee.kotlinsharp.parsing.Grammar
 import com.mscottmcbee.kotlinsharp.parsing.Nonterminal
-import com.mscottmcbee.kotlinsharp.parsing.Production
-import java.beans.Expression
+import com.mscottmcbee.kotlinsharp.parsing.Rule
 
 
 /*
@@ -64,120 +63,162 @@ class ToyLang {
 
         var newGrammar = Grammar()
 
+        var addTerminal = Nonterminal("addT").also{
+            Rule().also { prod ->
+                prod.firstSymbol = Token(TokenType.ADD)
+                it.rules.add(prod)
+            }
+
+            newGrammar.productions.add(it)
+        }
+
+        var mulTerminal = Nonterminal("mulT").also{
+            Rule().also { prod ->
+                prod.firstSymbol = Token(TokenType.MUL)
+                it.rules.add(prod)
+            }
+
+            newGrammar.productions.add(it)
+        }
+
+        var semiTerminal = Nonterminal("semiT").also{
+            Rule().also { prod ->
+                prod.firstSymbol = Token(TokenType.SEMICOLON)
+                it.rules.add(prod)
+            }
+
+            newGrammar.productions.add(it)
+        }
+
+        var numTerminal = Nonterminal("numT").also{
+            Rule().also { prod ->
+                prod.firstSymbol = Token(TokenType.NUMBER)
+                it.rules.add(prod)
+            }
+
+            newGrammar.productions.add(it)
+        }
+
         var readNonterminal = Nonterminal("READ").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.IDENTIFIER))
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.IDENTIFIER))
+                it.rules.add(prod)
             }
 
             newGrammar.productions.add(it)
         }
 
         var atomicExpressionNonterminal = Nonterminal("ATOMICEXPRESSION").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.NUMBER))
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.NUMBER))
+                it.rules.add(prod)
             }
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.STRING))
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.STRING))
+                it.rules.add(prod)
             }
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.IDENTIFIER))
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.IDENTIFIER))
+                it.rules.add(prod)
             }
 
             newGrammar.productions.add(it)
         }
 
         var tNonterminal = Nonterminal("T").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.NUMBER))
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(numTerminal)
+                it.rules.add(prod)
             }
+
+            newGrammar.productions.add(it)
         }
 
         var mulNonterminal = Nonterminal("MUL").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(tNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(tNonterminal)
+                it.rules.add(prod)
             }
 
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.MUL))
-                prod.symbols.add(tNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(it)
+                prod.production.add(mulTerminal)
+                prod.production.add(tNonterminal)
+                it.rules.add(prod)
             }
+
+            newGrammar.productions.add(it)
         }
 
         var addNonterminal = Nonterminal("ADD").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(mulNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(mulNonterminal)
+                it.rules.add(prod)
             }
 
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.ADD))
-                prod.symbols.add(mulNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(it)
+                prod.production.add(addTerminal)
+                prod.production.add(mulNonterminal)
+                it.rules.add(prod)
             }
+
+            newGrammar.productions.add(it)
         }
 
         var expressionNonterminal = Nonterminal("EXPRESSION").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(atomicExpressionNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(atomicExpressionNonterminal)
+                it.rules.add(prod)
             }
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(addNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(addNonterminal)
+                it.rules.add(prod)
             }
 
             newGrammar.productions.add(it)
         }
 
         var printNonterminal = Nonterminal("PRINT").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.PRINT))
-                prod.symbols.add(expressionNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.PRINT))
+                prod.production.add(expressionNonterminal)
+                it.rules.add(prod)
             }
 
             newGrammar.productions.add(it)
         }
 
         var assignmentNonterminal = Nonterminal("ASSIGNMENT").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.IDENTIFIER))
-                prod.symbols.add(Token(TokenType.ASSIGNMENT))
-                prod.symbols.add(expressionNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.IDENTIFIER))
+                prod.production.add(Token(TokenType.ASSIGNMENT))
+                prod.production.add(expressionNonterminal)
+                it.rules.add(prod)
             }
 
             newGrammar.productions.add(it)
         }
 
         var declarationNonterminal = Nonterminal("DECLARATION").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.VAR))
-                prod.symbols.add(assignmentNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.VAR))
+                prod.production.add(assignmentNonterminal)
+                it.rules.add(prod)
             }
 
             newGrammar.productions.add(it)
@@ -188,46 +229,46 @@ class ToyLang {
 
         //FOR assignment TO expr DO statements END
         var forNonterminal = Nonterminal("FOR").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.FOR))
-                prod.symbols.add(assignmentNonterminal)
-                prod.symbols.add(Token(TokenType.TO))
-                prod.symbols.add(expressionNonterminal)
-                prod.symbols.add(Token(TokenType.DO))
-                prod.symbols.add(statementsNonterminal)
-                prod.symbols.add(Token(TokenType.END))
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.FOR))
+                prod.production.add(assignmentNonterminal)
+                prod.production.add(Token(TokenType.TO))
+                prod.production.add(expressionNonterminal)
+                prod.production.add(Token(TokenType.DO))
+                prod.production.add(statementsNonterminal)
+                prod.production.add(Token(TokenType.END))
+                it.rules.add(prod)
             }
 
             newGrammar.productions.add(it)
         }
 
         var statementNonterminal = Nonterminal("STATEMENT").also {
-           /* Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(declarationNonterminal)
-                it.productions.add(prod)
+           /* Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(declarationNonterminal)
+                it.rules.add(prod)
             }
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(readNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(readNonterminal)
+                it.rules.add(prod)
             }
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(printNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(printNonterminal)
+                it.rules.add(prod)
             }
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(forNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(forNonterminal)
+                it.rules.add(prod)
             }*/
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(addNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(addNonterminal)
+                it.rules.add(prod)
             }
 
 
@@ -236,16 +277,16 @@ class ToyLang {
 
 
         var repeatingSemiNonterminal = Nonterminal("MAYBESEMI").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.SEMICOLON))
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(semiTerminal)
+                it.rules.add(prod)
             }
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(Token(TokenType.SEMICOLON))
-                prod.symbols.add(it)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(semiTerminal)
+                prod.production.add(it)
+                it.rules.add(prod)
             }
 
 
@@ -255,55 +296,58 @@ class ToyLang {
 
         statementsNonterminal.also {
             //:statement maybeSemi statements
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(statementNonterminal)
-                prod.symbols.add(repeatingSemiNonterminal)
-                prod.symbols.add(it)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(statementNonterminal)
+                prod.production.add(repeatingSemiNonterminal)
+                prod.production.add(it)
+                it.rules.add(prod)
             }
             //:statement maybeSemi
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(statementNonterminal)
-                prod.symbols.add(repeatingSemiNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(statementNonterminal)
+                prod.production.add(repeatingSemiNonterminal)
+                it.rules.add(prod)
             }
             //:maybeSemi statement maybeSemi statements
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(repeatingSemiNonterminal)
-                prod.symbols.add(statementNonterminal)
-                prod.symbols.add(repeatingSemiNonterminal)
-                prod.symbols.add(it)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(repeatingSemiNonterminal)
+                prod.production.add(statementNonterminal)
+                prod.production.add(repeatingSemiNonterminal)
+                prod.production.add(it)
+                it.rules.add(prod)
             }
             //:maybeSemi statement maybeSemi
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(repeatingSemiNonterminal)
-                prod.symbols.add(statementNonterminal)
-                prod.symbols.add(repeatingSemiNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(repeatingSemiNonterminal)
+                prod.production.add(statementNonterminal)
+                prod.production.add(repeatingSemiNonterminal)
+                it.rules.add(prod)
             }
             //:maybeSemi statement maybeSemi statements maybeSemi
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(repeatingSemiNonterminal)
-                prod.symbols.add(statementNonterminal)
-                prod.symbols.add(repeatingSemiNonterminal)
-                prod.symbols.add(it)
-                prod.symbols.add(repeatingSemiNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(repeatingSemiNonterminal)
+                prod.production.add(statementNonterminal)
+                prod.production.add(repeatingSemiNonterminal)
+                prod.production.add(it)
+                prod.production.add(repeatingSemiNonterminal)
+                it.rules.add(prod)
             }
             //:maybeSemi statement maybeSemi
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(repeatingSemiNonterminal)
-                prod.symbols.add(statementNonterminal)
-                prod.symbols.add(repeatingSemiNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(repeatingSemiNonterminal)
+                prod.production.add(statementNonterminal)
+                prod.production.add(repeatingSemiNonterminal)
+                it.rules.add(prod)
             }
+
+
+            newGrammar.productions.add(it)
         }
 /*
         statements
@@ -320,10 +364,10 @@ class ToyLang {
   */
 
         var startNonterminal = Nonterminal("START").also {
-            Production().also { prod ->
-                prod.symbols.add(it)
-                prod.symbols.add(addNonterminal)
-                it.productions.add(prod)
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(addNonterminal)
+                it.rules.add(prod)
             }
 
             newGrammar.productions.add(it)

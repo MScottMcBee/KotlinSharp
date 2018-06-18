@@ -2,123 +2,221 @@ package com.mscottmcbee.kotlinsharp.parsing
 
 import com.mscottmcbee.kotlinsharp.Token
 
+//https://joshuagrams.github.io/pep/
 class Parser(var tokens: List<Token>, var grammar: Grammar) {
 
-    var states: Array<ArrayList<Item>?> = arrayOfNulls<ArrayList<Item>?>(tokens.size+1)
-    var completed: HashMap<Production,ArrayList<Item>?>  = HashMap()
+   // var S:Item? = null
+
+    var S:ArrayList<Set> = ArrayList()
 
 
-    var sProd: Production? = null
+    fun parse(startRule: Rule) {
 
-    var final: Item? = null
+        var newSet = Set(grammar, 0)
+        var startItem = Item(startRule.firstSymbol,newSet)
+        newSet.items.add(startItem)
+       // set.
 
-    fun parse(startProduction: Production) {
-        addState(Item(startProduction,0,0),0)
+        //var set0: Set = //process(predict(Set(grammar, 0), startRule.firstSymbol))
+        S.add(newSet)
 
-        sProd = startProduction
+        var i = 1;
+        while (i < S.size){
+            var j = 0
+            while (j < S[i].items.size) {
+                //println("\t\t\t"+S[i].items.size)
+                var item = S[i].items[j]
 
-        for (i in 0 .. states.size-1 ){
-            if (states[i] != null) {
-                var stateSet = states[i]!!
-                var j = 0
-                while( j < stateSet.size) {
-                    var item = stateSet[j]
-                    if (!item.isFinished()){
-                        var symbol = item.getNextSymbol()
-                        if(symbol is Token){
-                            scanner(item, i)
-                        }else{
-                            predictor(item, i)
-                        }
-                    }else{
-                        completer(item, i)
-                    }
-                    j++
+                var tag:GrammarSymbol = item.tag
+
+                if (tag is LR0) {
+                    var next =  nextSymbol(tag)
+                    predict(S[i],next!!)
+                } else {
+                    complete(item)
                 }
-
+                j++
             }
+            i++
         }
-        var g = 231+2;
-//return chart
+
+
+
+        /*var setN: Set = tokens.fold(set0, { set: Set, symbol: GrammarSymbol ->
+
+            println("!!" + set + " " + symbol)
+
+            process(scan(set, symbol))
+        })*/
+
+       // var x:Item? = setN.idx[startRule.firstSymbol]!![set0]
+
+        var g = 231 + 2
+
     }
 
-    private fun addState(item:Item, index:Int){
-        if (states[index] == null){
-            states[index] = ArrayList()
+    fun predict(set: Set, symbol: GrammarSymbol): Set {
+        if (symbol is LR0){
+            println("aaaa")
         }
-        states[index]?.add(item)
-    }
-
-    private fun predictor(item: Item, k: Int){
-        var next = item.getNextSymbol() as Nonterminal
-        for (production in next.productions){
-
-            var newState = Item(production,0,item.originIndex)
-            if (!states[k]!!.contains(newState)){
-                addState(newState,k)
-            }
-        }
-        var x = 112+23
-    }
-
-    private fun scanner(item: Item, k: Int){
-        try {
-            if (item.getNextSymbol() == tokens[k]) {
-                var newState = Item(item.production, item.prodIndex + 1, item.originIndex)
-                newState.predPointer.add(item)
-                addState(newState, k + 1)
-            }
-        }catch (e:Exception){
-            var asd = 4356
-        }
-    }
-
-    private fun completer(completedItem: Item, k: Int){
-
-        if (completedItem.originIndex == k) {
-
-            if (completed[completedItem.production] == null){
-                completed[completedItem.production] = ArrayList()
-            }
-            completed[completedItem.production]?.add(completedItem)
-        }
-
-        if (completedItem.production == sProd){
-            final = completedItem
-        }
-
-
-
-        if (states[completedItem.originIndex] != null) {
-            for (item in states[completedItem.originIndex]!!){
-                if (item.getNextSymbol() == completedItem.production.firstSymbol){
-                    Item(item.production,item.prodIndex+1,item.originIndex).also {
-                      it.reducPointer.add(completedItem)
-                      it.predPointer.add(item)
-                      addState(it,k)
-                    }
+        if (symbol is Nonterminal){
+            var productions = grammar.getAllProductionsForNonterminal(symbol)
+            println("predict "+symbol);
+            if (productions != null){
+                for (rule in productions!!) {
+                    addItem(LR0(rule, 0), set, set)
                 }
             }
         }
+        return set
     }
 
 
-    /*
-    procedure PREDICTOR((A → α•Bβ, j), k, grammar)
-    for each (B → γ) in GRAMMAR-RULES-FOR(B, grammar) do
-        ADD-TO-SET((B → •γ, k), S[k])
-    end
+    //TODO: Complete is only called on tokens?????
+    fun complete(completed: Item) {
+      /*  println("Completed " + completed)
+        if (completed.start.wants[completed.tag] != null) {
+            for (item in completed.start.wants[completed.tag]!!) {
+                //if (item.tag is LR0) {
+                    var advancedSymbol = advance(item.tag)
+                    var a:Item = addItem(advancedSymbol, item.start, completed.end)
+                    addDerivation(a, item, completed)
+               // }
+            }
+        }else{println("null?")}*/
+    }
 
-procedure SCANNER((A → α•aβ, j), k, words)
-    if a ⊂ PARTS-OF-SPEECH(words[k]) then
-        ADD-TO-SET((A → αa•β, j), S[k+1])
-    end
+    fun scan(set: Set, symbol: GrammarSymbol): Set {
+     /*   var newSet = Set(set.grammar, set.position + 1)
+        println("new set "+newSet.position)
+        S.add(newSet)
+        addItem(symbol, set, newSet)
+        return newSet*/
+    }
 
-procedure COMPLETER((B → γ•, x), k)
-    for each (A → α•Bβ, j) in S[x] do
-        ADD-TO-SET((A → αB•β, j), S[k])
-    end
-     */
+  /*  fun processOnce(set: Set) {
+//        try {
+            var i = 0
+            while (i < set.items.size) {
+                println("\t\t\t"+set.items.size)
+                var item = set.items[i]
 
 
+
+                var tag:GrammarSymbol = item.tag
+
+
+
+                if (tag is LR0) {
+                    var next =  nextSymbol(tag)
+                    predict(set,next!!)
+                } else {
+                    complete(item)
+                }
+                i++
+            }
+    //    }catch (e:Exception){
+      //      println(e)
+       // }
+    }*/
+
+   /* fun process(set: Set): Set {
+      //  do {
+      //      var old = set.items.size
+            processOnce(set)
+           // println(""+ set.items.size + " " + old)
+     //   } while (set.items.size > old)
+
+        return set
+    }*/
+
+    fun addItem(tag: GrammarSymbol, start: Set): Item {
+        for (i:Item in start.items){
+            if i ==
+        }
+       // end.idx[tag]?.also { dict ->
+        //    if (dict[start.position] != null)
+        //        return dict[start.position]!!
+       // }
+        return appendItem(tag, start)*/
+    }
+
+    fun appendItem(tag: GrammarSymbol, start: Set, end: Set): Item {
+      /*  var newItem = Item(tag, start, end)
+        end.items.add(newItem)
+        end.idxAdd(tag, start, newItem)
+        if (tag is LR0) {
+            end.wantsAdd(tag.rule.firstSymbol, newItem)
+        }
+        return newItem*/
+    }
+
+    fun nextSymbol(lr0: LR0): GrammarSymbol? {
+        if (lr0.dot < lr0.rule.production.size)
+            return lr0.rule.production[lr0.dot]
+        return lr0.rule.firstSymbol
+    }
+
+    fun advance(symbol: GrammarSymbol): GrammarSymbol {
+        if (symbol is LR0) {
+            var lr0 = symbol
+            println ( "" + lr0.rule.firstSymbol)
+            if (lr0.dot == lr0.rule.production.size - 1) {
+                return LR0(lr0.rule, lr0.dot + 1)
+            }
+            return lr0.rule.firstSymbol
+        }else{
+            var x = 12;
+        }
+        return symbol
+    }
+
+    // Derivations
+
+    fun addDerivation(item: Derivation, left: Item?, right: Item?){
+        var leftt:Derivation? = left
+        if (left == null && right == null)
+            return
+
+        if (left != null && left!!.tag is LR0 && (left!!.tag as LR0).dot <= 1){
+            leftt = leftt!!.right
+        }
+
+        if (item.left == null && item.right == null){
+            setDerivation(item, leftt, right)
+        }else if (item.right != null){
+            addSecondDerivation(item, leftt, right)
+        }else{
+            addAnotherDerivation(item, left, right)
+        }
+    }
+
+    fun setDerivation(item: Derivation, left: Derivation?, right: Derivation?){
+        item.left = left
+        item.right = right
+    }
+
+    fun sameDerivation(item: Derivation, left: Derivation?, right: Derivation?): Boolean{
+        return item.left == left && item.right == right
+    }
+
+    fun addSecondDerivation(item: Derivation, left: Derivation?, right: Derivation?){
+        if (!sameDerivation(item,left,right)){
+            var old = Derivation(item.left,item.right,null)
+            item.left = Derivation(left,right,old)
+            item.right = null
+        }
+    }
+
+    fun addAnotherDerivation(item: Derivation, left: Derivation?, right: Derivation?){
+        var d:Derivation? = item.left
+        while(d != null){
+
+            if (d == null || sameDerivation(d!!,left,right)){
+                return
+            }
+            d=d.next
+        }
+        item.left = Derivation(left,right,item.left)
+    }
 }

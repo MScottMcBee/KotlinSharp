@@ -37,5 +37,9 @@ class Token(val type: TokenType): GrammarSymbol() {
         return type.hashCode()
     }
 
+    override fun toString(): String {
+        return "Token(type=$type)"
+    }
+
 
 }

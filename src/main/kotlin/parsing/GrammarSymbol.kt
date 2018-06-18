@@ -1,3 +1,4 @@
 package com.mscottmcbee.kotlinsharp.parsing
 
-open class GrammarSymbol
+open class GrammarSymbol{
+}

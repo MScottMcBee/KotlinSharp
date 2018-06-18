@@ -2,7 +2,7 @@ package com.mscottmcbee.kotlinsharp.parsing
 
 class Nonterminal(val id:String): GrammarSymbol(){
 
-    var productions:ArrayList<Production> = ArrayList()
+    var rules:ArrayList<Rule> = ArrayList()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -17,6 +17,10 @@ class Nonterminal(val id:String): GrammarSymbol(){
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    override fun toString(): String {
+        return "Nonterminal(id='$id')"
     }
 
 

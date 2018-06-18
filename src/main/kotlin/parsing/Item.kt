@@ -1,23 +1,15 @@
 package com.mscottmcbee.kotlinsharp.parsing
 
-import parsing.SPPFNode
 
-data class Item(val production: Production, var prodIndex:Int, val originIndex:Int){
+data class Item(val tag: GrammarSymbol, val start:Set): Derivation(null, null, null){
 
-    var sppfNode: SPPFNode? = null
-
-    var reducPointer: ArrayList<Item?> = ArrayList()
-
-    var predPointer: ArrayList<Item?> = ArrayList()
-
-    var threePointer: ArrayList<Item?> = ArrayList()
-
+/*
     fun isFinished():Boolean {
-        return prodIndex >= production.symbols.count()-1
+        return prodIndex >= rule.production.count()-1
     }
 
     fun getNextSymbol():GrammarSymbol{
-        return production.symbols[prodIndex+1]
+        return rule.production[prodIndex+1]
     }
 
     override fun equals(other: Any?): Boolean {
@@ -26,7 +18,7 @@ data class Item(val production: Production, var prodIndex:Int, val originIndex:I
 
         other as Item
 
-        if (production != other.production)
+        if (rule != other.rule)
             return false
         if (prodIndex != other.prodIndex)
             return false
@@ -35,4 +27,5 @@ data class Item(val production: Production, var prodIndex:Int, val originIndex:I
 
         return true
     }
+    */
 }
