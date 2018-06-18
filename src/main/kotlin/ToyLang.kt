@@ -63,7 +63,7 @@ class ToyLang {
 
         var newGrammar = Grammar()
 
-        var addTerminal = Nonterminal("addT").also{
+     /*   var addTerminal = Nonterminal("addT").also{
             Rule().also { prod ->
                 prod.firstSymbol = Token(TokenType.ADD)
                 it.rules.add(prod)
@@ -97,7 +97,7 @@ class ToyLang {
             }
 
             newGrammar.productions.add(it)
-        }
+        }*/
 
         var readNonterminal = Nonterminal("READ").also {
             Rule().also { prod ->
@@ -132,7 +132,7 @@ class ToyLang {
         var tNonterminal = Nonterminal("T").also {
             Rule().also { prod ->
                 prod.firstSymbol = it
-                prod.production.add(numTerminal)
+                prod.production.add(Token(TokenType.NUMBER))
                 it.rules.add(prod)
             }
 
@@ -149,7 +149,7 @@ class ToyLang {
             Rule().also { prod ->
                 prod.firstSymbol = it
                 prod.production.add(it)
-                prod.production.add(mulTerminal)
+                prod.production.add(Token(TokenType.MUL))
                 prod.production.add(tNonterminal)
                 it.rules.add(prod)
             }
@@ -167,8 +167,21 @@ class ToyLang {
             Rule().also { prod ->
                 prod.firstSymbol = it
                 prod.production.add(it)
-                prod.production.add(addTerminal)
+                prod.production.add(Token(TokenType.ADD))
                 prod.production.add(mulNonterminal)
+                it.rules.add(prod)
+            }
+
+            newGrammar.productions.add(it)
+        }
+
+        var parenNonterminal = Nonterminal("PAREN").also {
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.OPENPAREN))
+                prod.production.add(addNonterminal)
+                prod.production.add(Token(TokenType.CLOSEPAREN))
+
                 it.rules.add(prod)
             }
 
@@ -184,6 +197,11 @@ class ToyLang {
             Rule().also { prod ->
                 prod.firstSymbol = it
                 prod.production.add(addNonterminal)
+                it.rules.add(prod)
+            }
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(parenNonterminal)
                 it.rules.add(prod)
             }
 
@@ -279,12 +297,12 @@ class ToyLang {
         var repeatingSemiNonterminal = Nonterminal("MAYBESEMI").also {
             Rule().also { prod ->
                 prod.firstSymbol = it
-                prod.production.add(semiTerminal)
+                prod.production.add(Token(TokenType.SEMICOLON))
                 it.rules.add(prod)
             }
             Rule().also { prod ->
                 prod.firstSymbol = it
-                prod.production.add(semiTerminal)
+                prod.production.add(Token(TokenType.SEMICOLON))
                 prod.production.add(it)
                 it.rules.add(prod)
             }

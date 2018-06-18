@@ -15,5 +15,7 @@ enum class TokenType{
     DO,
     END,
     ADD,
-    MUL
+    MUL,
+    OPENPAREN,
+    CLOSEPAREN
 }

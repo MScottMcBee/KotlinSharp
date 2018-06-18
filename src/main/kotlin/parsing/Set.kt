@@ -1,6 +1,6 @@
 package com.mscottmcbee.kotlinsharp.parsing
 
-class Set(var grammar: Grammar, var position: Int){
+class Set(){
 
     var items: ArrayList<Item> = ArrayList()
    // var idx:HashMap<GrammarSymbol, HashMap<Int,Item>> = HashMap()

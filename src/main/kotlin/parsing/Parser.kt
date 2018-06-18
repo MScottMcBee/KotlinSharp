@@ -2,32 +2,49 @@ package com.mscottmcbee.kotlinsharp.parsing
 
 import com.mscottmcbee.kotlinsharp.Token
 
-//https://joshuagrams.github.io/pep/
+// http://loup-vaillant.fr/tutorials/earley-parsing/recogniser
 class Parser(var tokens: List<Token>, var grammar: Grammar) {
 
-   // var S:Item? = null
 
     var S:ArrayList<Set> = ArrayList()
 
 
     fun parse(startRule: Rule) {
 
-        var newSet = Set(grammar, 0)
-        var startItem = Item(startRule.firstSymbol,newSet)
+        var newSet = Set()
+        var startItem = Item(startRule,0,0)
         newSet.items.add(startItem)
        // set.
 
         //var set0: Set = //process(predict(Set(grammar, 0), startRule.firstSymbol))
         S.add(newSet)
 
-        var i = 1;
+        var i = 0;
         while (i < S.size){
+            println("Set # " + i )
             var j = 0
             while (j < S[i].items.size) {
                 //println("\t\t\t"+S[i].items.size)
                 var item = S[i].items[j]
+                var nextSymbol = item.nextSymbol()
 
-                var tag:GrammarSymbol = item.tag
+                if (nextSymbol == null) {
+                    println("complete")
+                    complete(item,i)
+                }else {
+                    var symbol = nextSymbol!!
+                    if (symbol is Nonterminal) {
+                        predict(symbol, i)
+                    }else if (symbol is Token){
+                        scan(symbol, i,item)
+                    }else {
+                        println("Whatthe fuck???")
+                    }
+                }
+
+
+
+               /* var tag:GrammarSymbol = item.tag
 
                 if (tag is LR0) {
                     var next =  nextSymbol(tag)
@@ -35,8 +52,10 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
                 } else {
                     complete(item)
                 }
+                */
                 j++
             }
+            println("End Set# $i of ${S.size}")
             i++
         }
 
@@ -55,25 +74,29 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
 
     }
 
-    fun predict(set: Set, symbol: GrammarSymbol): Set {
-        if (symbol is LR0){
-            println("aaaa")
-        }
-        if (symbol is Nonterminal){
-            var productions = grammar.getAllProductionsForNonterminal(symbol)
-            println("predict "+symbol);
-            if (productions != null){
-                for (rule in productions!!) {
-                    addItem(LR0(rule, 0), set, set)
-                }
+    fun predict(nonterminal: Nonterminal, setIndex: Int) {
+        var productions = grammar.getAllProductionsForNonterminal(nonterminal)
+        println("predict "+nonterminal);
+        if (productions != null){
+            for (rule in productions!!) {
+                addItem(rule,setIndex)
             }
         }
-        return set
     }
 
 
     //TODO: Complete is only called on tokens?????
-    fun complete(completed: Item) {
+    fun complete(completed: Item, currentSetIndex:Int ) {
+        println("Completed ${completed.rule.firstSymbol}")
+        for (item: Item in S[completed.setIndex].items){
+            if (item.nextSymbol() == completed.rule.firstSymbol){
+                var newItem = Item(item.rule,item.dot+1, item.setIndex)
+                S[currentSetIndex].items.add(newItem)
+            }
+        }
+
+
+
       /*  println("Completed " + completed)
         if (completed.start.wants[completed.tag] != null) {
             for (item in completed.start.wants[completed.tag]!!) {
@@ -86,12 +109,32 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
         }else{println("null?")}*/
     }
 
-    fun scan(set: Set, symbol: GrammarSymbol): Set {
+    fun scan(grammarToken: Token, setIndex:Int, item:Item) {
+
+        println("scanning found token " + grammarToken + " vs " + tokens[setIndex])
+        if (grammarToken == tokens[setIndex]){
+            println("It was there")
+            if (S.size <= setIndex+1 ){
+                var newSet = Set()
+                S.add(newSet)
+            }
+            var newItem = Item(item.rule, item.dot+1,item.setIndex)
+
+            S[setIndex+1].items.add(newItem)
+
+        }else{
+            println("wrong one")
+        }
+
+
      /*   var newSet = Set(set.grammar, set.position + 1)
         println("new set "+newSet.position)
         S.add(newSet)
         addItem(symbol, set, newSet)
         return newSet*/
+
+
+
     }
 
   /*  fun processOnce(set: Set) {
@@ -130,35 +173,21 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
         return set
     }*/
 
-    fun addItem(tag: GrammarSymbol, start: Set): Item {
-        for (i:Item in start.items){
-            if i ==
+    fun addItem(rule: Rule, setIndex: Int) {
+
+        var newItem = Item(rule, 0, setIndex)
+
+
+        for (item:Item in S[setIndex].items){
+            if (newItem == item){
+                return
+            }
         }
-       // end.idx[tag]?.also { dict ->
-        //    if (dict[start.position] != null)
-        //        return dict[start.position]!!
-       // }
-        return appendItem(tag, start)*/
+        S[setIndex].items.add(newItem)
     }
 
-    fun appendItem(tag: GrammarSymbol, start: Set, end: Set): Item {
-      /*  var newItem = Item(tag, start, end)
-        end.items.add(newItem)
-        end.idxAdd(tag, start, newItem)
-        if (tag is LR0) {
-            end.wantsAdd(tag.rule.firstSymbol, newItem)
-        }
-        return newItem*/
-    }
-
-    fun nextSymbol(lr0: LR0): GrammarSymbol? {
-        if (lr0.dot < lr0.rule.production.size)
-            return lr0.rule.production[lr0.dot]
-        return lr0.rule.firstSymbol
-    }
-
-    fun advance(symbol: GrammarSymbol): GrammarSymbol {
-        if (symbol is LR0) {
+    fun advance(symbol: GrammarSymbol) {
+      /*  if (symbol is LR0) {
             var lr0 = symbol
             println ( "" + lr0.rule.firstSymbol)
             if (lr0.dot == lr0.rule.production.size - 1) {
@@ -168,11 +197,11 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
         }else{
             var x = 12;
         }
-        return symbol
+        return symbol*/
     }
 
     // Derivations
-
+/*
     fun addDerivation(item: Derivation, left: Item?, right: Item?){
         var leftt:Derivation? = left
         if (left == null && right == null)
@@ -218,5 +247,5 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
             d=d.next
         }
         item.left = Derivation(left,right,item.left)
-    }
+    }*/
 }

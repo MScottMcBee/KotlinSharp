@@ -4,7 +4,7 @@ import com.mscottmcbee.kotlinsharp.Token
 
 class Rule{
 
-    lateinit var firstSymbol: GrammarSymbol
+    lateinit var firstSymbol: Nonterminal
 
     var production:ArrayList<GrammarSymbol> = ArrayList()
 

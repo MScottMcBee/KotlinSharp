@@ -57,6 +57,16 @@ class Tokenizer {
                 Token(TokenType.MUL)
             }
 
+            charArray[index] == '(' -> {
+                index++
+                Token(TokenType.OPENPAREN)
+            }
+
+            charArray[index] == ')' -> {
+                index++
+                Token(TokenType.CLOSEPAREN)
+            }
+
             charArray[index] == '"' -> {
                 stringBuilder = StringBuilder()
                 index++
