@@ -38,7 +38,7 @@ class Token(val type: TokenType): GrammarSymbol() {
     }
 
     override fun toString(): String {
-        return "Token(type=$type)"
+        return "T($type)"
     }
 
 

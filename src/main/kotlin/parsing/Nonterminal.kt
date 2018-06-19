@@ -20,7 +20,7 @@ class Nonterminal(val id:String): GrammarSymbol(){
     }
 
     override fun toString(): String {
-        return "Nonterminal(id='$id')"
+        return "NT('$id')"
     }
 
 
