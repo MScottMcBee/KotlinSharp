@@ -385,6 +385,7 @@ class ToyLang {
             Rule().also { prod ->
                 prod.firstSymbol = it
                 prod.production.add(addNonterminal)
+                prod.production.add(Token(TokenType.SEMICOLON))
                 it.rules.add(prod)
             }
 
