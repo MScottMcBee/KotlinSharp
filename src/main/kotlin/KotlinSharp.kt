@@ -31,10 +31,17 @@ class KotlinSharp {
         val tokens = tokenizer.tokenizeMeCaptain(s)
 
         var grammar: Grammar = ToyLang().getGrammar()
+        var start:Rule = grammar.getAllProductionsForNonterminal("START")?.get(0)!!
 
-        var parser:Parser = Parser(tokens, grammar)
+        var recognizer: EarlyRecognizer = EarlyRecognizer(tokens,grammar)
 
-        parser.parse(grammar.getAllProductionsForNonterminal("START")?.get(0)!!)
+        var earleyData = recognizer.recognize(start)
+        if (earleyData != null) {
+            var parser: Parser = Parser(tokens, earleyData)
+
+            var node: TreeNode? = parser.parse(start)
+            var x = 1+2
+        }
 
         var x = 1+2
     }
