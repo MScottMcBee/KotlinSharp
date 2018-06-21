@@ -134,7 +134,9 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
 
 
         if (start != null) {
-            scan2(0, start)
+            var node = scan2(0, start,0)
+
+            var g = 231 + 2
         }
 
 
@@ -198,43 +200,67 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
 
 
     //scan2 returns the list of items that match the item production inbetween startingIndex and item.setIndex
-    fun scan2(startingIndex: Int, item: Item): ArrayList<Item>? {
+    fun scan2(startingIndex: Int, item: Item,w:Int): TreeNode? {
         var data = outputData!!
         var index = 0
+        var node = TreeNode(item,ArrayList(),null)
         println("SCAN $startingIndex ${item.setIndex}")
 
         var bool = scan3(0,item,0,item.setIndex)
 
 
         var possibles: ArrayList<Item> = ArrayList()
-      /*  for (i in 0 .. item.rule.production.size) {
-            possibles.add(ArrayList())
-        }*/
-/*
-        var y = 0;
-        //var setIndex = startingIndex
-        for (index in 0 until item.rule.production.size){
-            var symbol = item.rule.production[index]
-            println(symbol)
-            if (symbol is Nonterminal) {
 
-                for (item: Item in data[startingIndex]) {
-                    if (item.rule.firstSymbol == item.rule.production[index]) {
-                        possibles[index].add(item)
+        var y = startingIndex
+        for (i in 0 until item.rule.production.size) {
+            var symbol = item.rule.production[i]
+            println("?$w?? $symbol")
+
+            if (symbol is Nonterminal) {
+                var possibles: ArrayList<Item> = ArrayList()
+                for (newItem: Item in data[startingIndex]) {
+                    if (newItem.rule.firstSymbol == symbol) {
+                        println("!$w!!" + newItem)
+                        if (item.rule.production.size == 1) {
+                           // IS this the thing we NEED??????
+                            if (newItem.setIndex == item.setIndex) {
+                               // scan2(y, newItem, w + 1)
+                                var newNode = scan2(y, newItem, w+1)
+                                if (newNode == null) {
+                                    println("Broke")
+                                }
+                                node.children.add(newNode!!)
+                                y = newItem.setIndex
+                            }
+                        }else {
+
+
+                            var b = scan3(newItem.setIndex, item, 1, item.setIndex)
+                            println("$newItem,   $b")
+                            if (b) {
+                                var newNode = scan2(y, newItem, w+1)
+                                if (newNode == null) {
+                                    println("Broke")
+                                }
+                                node.children.add(newNode!!)
+                                y = newItem.setIndex
+                            }
+                        }
                     }
                 }
-            }else if (symbol is Token){
 
+
+            } else if (symbol is Token) {
+                node.children.add(TreeNode(null, ArrayList(),symbol))
+                y += 1
             }
-
         }
-*/
         var xxxx = 12
-        return null
+        return node
     }
 
     fun scan3(startingIndex:Int, item:Item, depth:Int, target:Int):Boolean{
-        println(item)
+        //println(item)
         var data = outputData!!
         if (startingIndex >= data.size){
             return false
@@ -244,9 +270,9 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
 
         if (symbol is Nonterminal) {
             var possibles: ArrayList<Item> = ArrayList()
-            for (item: Item in data[startingIndex]) {
-                if (item.rule.firstSymbol == item.rule.production[depth]) {
-                    possibles.add(item)
+            for (newItem: Item in data[startingIndex]) {
+                if (newItem.rule.firstSymbol == item.rule.production[depth]) {
+                    possibles.add(newItem)
                 }
             }
 
@@ -268,6 +294,9 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
             return found
 
         }else if (symbol is Token){
+            if (startingIndex >= tokens.size){
+                return false
+            }
             if (tokens[startingIndex] == symbol) {
                 if (depth == item.rule.production.size - 1) {
                     return startingIndex + 1 == target
@@ -280,24 +309,7 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
     }
 
 
-/*
-
-    Start at item X
-        Look at data[startingIndex] for all entries where d[sI].first == X.prod[0]
-         store in pos[0]
-            for matches:
-                look at pos[j]
-                 is x.prod[1] a terminal?
-                    is input[pos[j].setIndex that terminal?
-
-
-                 is x.prod[1] a nonterminal?
-                    is there data[sI]?
-                    is there the nonTerm in data[sI]?
-
- */
-
 }
 
 
-data class TreeNode(val item:Item, val children:ArrayList<GrammarSymbol>)
+data class TreeNode(val item:Item?, val children:ArrayList<TreeNode>, val data:Any?)
