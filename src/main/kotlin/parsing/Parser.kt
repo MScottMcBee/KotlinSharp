@@ -96,6 +96,7 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
                 var item: Item = S[i].items[j]
                 if (item.nextSymbol() == null) {
                     var newItem = Item(item.rule, item.dot, i)
+                    newItem.start = item.setIndex
                     outputData!![item.setIndex].add(newItem)
                 }
                 j++
@@ -114,7 +115,7 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
                     asd += symbol.toString()+" "
                 }
                 print (String.format("%-35s ->  ", asd))
-                print ("(${item.setIndex})")
+                print ("(${item.start})->(${item.setIndex})")
                 println("")
 
             }
@@ -204,9 +205,9 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
         var data = outputData!!
         var index = 0
         var node = TreeNode(item,ArrayList(),null)
-        println("SCAN $startingIndex ${item.setIndex}")
+   //     println("SCAN $startingIndex ${item.setIndex}")
 
-        var bool = scan3(0,item,0,item.setIndex)
+        var bool = scan3(startingIndex,item,0,item.setIndex)
 
 
         var possibles: ArrayList<Item> = ArrayList()
@@ -214,17 +215,18 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
         var y = startingIndex
         for (i in 0 until item.rule.production.size) {
             var symbol = item.rule.production[i]
-            println("?$w?? $symbol")
+     //       println("?$w?? $symbol")
 
             if (symbol is Nonterminal) {
                 var possibles: ArrayList<Item> = ArrayList()
-                for (newItem: Item in data[startingIndex]) {
+                for (newItem: Item in data[y]) {
                     if (newItem.rule.firstSymbol == symbol) {
-                        println("!$w!!" + newItem)
-                        if (item.rule.production.size == 1) {
+   //                     println("!$w!!" + newItem)
+                        if (item.rule.production.size == i+1) {
                            // IS this the thing we NEED??????
                             if (newItem.setIndex == item.setIndex) {
                                // scan2(y, newItem, w + 1)
+
                                 var newNode = scan2(y, newItem, w+1)
                                 if (newNode == null) {
                                     println("Broke")
@@ -234,9 +236,9 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
                             }
                         }else {
 
-
-                            var b = scan3(newItem.setIndex, item, 1, item.setIndex)
-                            println("$newItem,   $b")
+     //                       println("~~~~~~~~~")
+                            var b = scan3(newItem.setIndex, item, i+1, item.setIndex)
+    //                        println("$newItem,   $b")
                             if (b) {
                                 var newNode = scan2(y, newItem, w+1)
                                 if (newNode == null) {
@@ -251,7 +253,8 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
 
 
             } else if (symbol is Token) {
-                node.children.add(TreeNode(null, ArrayList(),symbol))
+                println(tokens[y])
+                node.children.add(TreeNode(null, ArrayList(),tokens[y]))
                 y += 1
             }
         }
@@ -260,7 +263,7 @@ class Parser(var tokens: List<Token>, var grammar: Grammar) {
     }
 
     fun scan3(startingIndex:Int, item:Item, depth:Int, target:Int):Boolean{
-        //println(item)
+     //   println("scan3: $startingIndex, $item, $depth, $target")
         var data = outputData!!
         if (startingIndex >= data.size){
             return false

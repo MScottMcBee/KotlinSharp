@@ -3,6 +3,8 @@ package com.mscottmcbee.kotlinsharp.parsing
 
 data class Item(val rule: Rule, val dot: Int, val setIndex:Int): Derivation(null, null, null){
 
+    var start = -1
+
     fun nextSymbol(): GrammarSymbol? {
         if (dot < rule.production.size)
             return rule.production[dot]
@@ -10,7 +12,12 @@ data class Item(val rule: Rule, val dot: Int, val setIndex:Int): Derivation(null
     }
 
     override fun toString(): String {
-        return "${rule.firstSymbol} -> ${rule.production[0]}...: dot: $dot, setIndex: $setIndex"
+        var s:String = "${rule.firstSymbol} -> "
+        for (symbol:GrammarSymbol in rule.production){
+            s += "$symbol "
+        }
+        s += ": dot: $dot, setIndex: $setIndex, start: $start"
+        return s
     }
 
     override fun equals(other: Any?): Boolean {
