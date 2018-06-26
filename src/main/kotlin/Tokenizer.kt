@@ -8,7 +8,7 @@ class Tokenizer {
 
     var tokens = ArrayList<Token>()
 
-    fun tokenizeMeCaptain(file: String) : List<Token> {
+    fun tokenize(file: String) : List<Token> {
 
         charArray = file.toCharArray()
 

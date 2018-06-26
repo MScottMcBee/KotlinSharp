@@ -9,7 +9,7 @@ buildscript {
     }
 }
 
-version '1.0-SNAPSHOT'
+version '0.1'
 
 apply plugin: 'kotlin'
 apply plugin: 'application'
@@ -43,3 +43,13 @@ jar {
 
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
+
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
+
+task copyToLib(type: Copy) {
+    into "$buildDir/lib"
+    from(configurations.compile)
+}
+
+stage.dependsOn(copyToLib)

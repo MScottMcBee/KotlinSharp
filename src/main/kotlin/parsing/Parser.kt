@@ -17,8 +17,7 @@ class Parser(private val tokens:List<Token>, private val data:ArrayList<ArrayLis
 
         if (start != null) {
             var node = search(0, start,0)
-            collapse(node!!)
-            return node
+            return node!!
         }
         return null
     }
@@ -113,12 +112,4 @@ class Parser(private val tokens:List<Token>, private val data:ArrayList<ArrayLis
         return false
     }
 
-    fun collapse(node: TreeNode){
-        for (i in 0 until node.children.size){
-            while (node.children[i].children.size == 1){
-                node.children[i] = node.children[i].children[0]
-            }
-            collapse(node.children[i])
-        }
-    }
 }
