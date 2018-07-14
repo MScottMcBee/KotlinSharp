@@ -1,6 +1,7 @@
 package com.mscottmcbee.kotlinsharp
 
 import com.mscottmcbee.kotlinsharp.parsing.*
+import com.mscottmcbee.kotlinsharp.semantics.SemanticAnalysis
 import java.io.*
 
 class KotlinSharp {
@@ -41,11 +42,11 @@ class KotlinSharp {
 
             var node: TreeNode? = parser.parse(start)
 
-            var analyzer: StaticAnalysis = StaticAnalysis()
-            analyzer.analyze(node!!)
+            var analyzer: SemanticAnalysis = SemanticAnalysis()
+            var ast = analyzer.analyze(node!!)
 
             var generator = CodeGenerator()
-            var code = generator.codegen(node!!)
+            var code = generator.codegen(ast!!)
 
             println(code)
 

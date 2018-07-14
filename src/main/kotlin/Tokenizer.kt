@@ -74,6 +74,7 @@ class Tokenizer {
             }
 
             else -> {
+                var xxx = charArray[index]
                 index++
                 null
             }

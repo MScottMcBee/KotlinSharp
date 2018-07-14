@@ -135,6 +135,11 @@ class ToyLang {
                 prod.production.add(Token(TokenType.NUMBER))
                 it.rules.add(prod)
             }
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.IDENTIFIER))
+                it.rules.add(prod)
+            }
 
             newGrammar.productions.add(it)
         }
@@ -235,10 +240,17 @@ class ToyLang {
             Rule().also { prod ->
                 prod.firstSymbol = it
                 prod.production.add(Token(TokenType.VAR))
-                prod.production.add(assignmentNonterminal)
+                prod.production.add(Token(TokenType.IDENTIFIER))
                 it.rules.add(prod)
             }
-
+            Rule().also { prod ->
+                prod.firstSymbol = it
+                prod.production.add(Token(TokenType.VAR))
+                prod.production.add(Token(TokenType.IDENTIFIER))
+                prod.production.add(Token(TokenType.ASSIGNMENT))
+                prod.production.add(expressionNonterminal)
+                it.rules.add(prod)
+            }
             newGrammar.productions.add(it)
         }
 
@@ -263,7 +275,7 @@ class ToyLang {
         }
 
         var statementNonterminal = Nonterminal("STATEMENT").also {
-           /* Rule().also { prod ->
+            Rule().also { prod ->
                 prod.firstSymbol = it
                 prod.production.add(declarationNonterminal)
                 it.rules.add(prod)
@@ -282,12 +294,12 @@ class ToyLang {
                 prod.firstSymbol = it
                 prod.production.add(forNonterminal)
                 it.rules.add(prod)
-            }*/
-            Rule().also { prod ->
+            }
+            /*Rule().also { prod ->
                 prod.firstSymbol = it
                 prod.production.add(addNonterminal)
                 it.rules.add(prod)
-            }
+            }*/
 
 
             newGrammar.productions.add(it)
@@ -328,6 +340,7 @@ class ToyLang {
                 prod.production.add(repeatingSemiNonterminal)
                 it.rules.add(prod)
             }
+            /*
             //:maybeSemi statement maybeSemi statements
             Rule().also { prod ->
                 prod.firstSymbol = it
@@ -363,7 +376,7 @@ class ToyLang {
                 prod.production.add(repeatingSemiNonterminal)
                 it.rules.add(prod)
             }
-
+*/
 
             newGrammar.productions.add(it)
         }
@@ -384,8 +397,7 @@ class ToyLang {
         var startNonterminal = Nonterminal("START").also {
             Rule().also { prod ->
                 prod.firstSymbol = it
-                prod.production.add(addNonterminal)
-                prod.production.add(Token(TokenType.SEMICOLON))
+                prod.production.add(statementsNonterminal)
                 it.rules.add(prod)
             }
 

@@ -74,7 +74,7 @@ class EarlyRecognizer(var tokens: List<Token>, var grammar: Grammar) {
             i++
         }
 
-        var printout = false
+        var printout = true
         if (printout) {
             for (z in 0..outputData!!.size - 1) {
                 println("=== $z ===")
@@ -109,12 +109,19 @@ class EarlyRecognizer(var tokens: List<Token>, var grammar: Grammar) {
         for (item: Item in S[completed.setIndex].items) {
             if (item.nextSymbol() == completed.rule.firstSymbol) {
                 var newItem = Item(item.rule, item.dot + 1, item.setIndex)
-                S[currentSetIndex].items.add(newItem)
+                if (!S[currentSetIndex].items.contains(newItem)) {
+                    S[currentSetIndex].items.add(newItem)
+                }
             }
         }
     }
 
     private fun scan(grammarToken: Token, setIndex: Int, item: Item) {
+        if (setIndex >= tokens.size){
+            println("recognizer scan token out of bounds. last time this was part of a larger problem?")
+            return
+        }
+
         if (grammarToken == tokens[setIndex]) {
             if (S.size <= setIndex + 1) {
                 var newSet = Set()
