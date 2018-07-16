@@ -2,6 +2,7 @@ package com.mscottmcbee.kotlinsharp
 
 import com.mscottmcbee.kotlinsharp.parsing.*
 import com.mscottmcbee.kotlinsharp.semantics.SemanticAnalysis
+import util.BNFParser
 import java.io.*
 
 class KotlinSharp {
@@ -13,7 +14,7 @@ class KotlinSharp {
             fileLocation = "abcd.xyz"
             if (args.size > 0) {
                 fileLocation = "${args[0]}"
-                /// println("Please pass a file to build")
+                // println("Please pass a file to build")
             }
             println("\"building\" " + fileLocation)
             val kotlinSharp = KotlinSharp()
@@ -31,8 +32,8 @@ class KotlinSharp {
 
         val tokens = tokenizer.tokenize(input)
 
-        var grammar: Grammar = ToyLang().getGrammar()
-        var start: Rule = grammar.getAllProductionsForNonterminal("START")?.get(0)!!
+        var grammar: Grammar = BNFParser.Generate(BNFParser.toy)//ToyLang().getGrammar()
+        var start: Rule = grammar.getAllProductionsForNonterminal("start")?.get(0)!!
 
         var recognizer: EarlyRecognizer = EarlyRecognizer(tokens, grammar)
 

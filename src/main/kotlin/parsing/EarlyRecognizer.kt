@@ -106,7 +106,11 @@ class EarlyRecognizer(var tokens: List<Token>, var grammar: Grammar) {
     }
 
     private fun complete(completed: Item, currentSetIndex: Int) {
-        for (item: Item in S[completed.setIndex].items) {
+        //This used to iterate through all things in S, but now asdasdasd
+        var size = S[completed.setIndex].items.count()
+        //for (item: Item in S[completed.setIndex].items) {
+          for (i in 0 until size){
+            var item = S[completed.setIndex].items[i]
             if (item.nextSymbol() == completed.rule.firstSymbol) {
                 var newItem = Item(item.rule, item.dot + 1, item.setIndex)
                 if (!S[currentSetIndex].items.contains(newItem)) {

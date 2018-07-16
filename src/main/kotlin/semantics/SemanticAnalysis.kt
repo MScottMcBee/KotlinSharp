@@ -52,22 +52,22 @@ class SemanticAnalysis() {
             }
         } else {
             when (node.item!!.rule.firstSymbol.id) {
-                "START", "STATEMENTS" -> {
+                "start", "statements" -> {
                     thisASTNode = ASTNode("SEQ")
                 }
-                "ADD" -> {
+                "add" -> {
                     thisASTNode = ASTNode("ADD")
                 }
-                "MUL" -> {
+                "mul" -> {
                     thisASTNode = ASTNode("MUL")
                 }
-                "ASSIGNMENT" -> {
+                "assignment" -> {
                     thisASTNode = ASTNode("ASS")
                 }
-                "PRINT" -> {
+                "print" -> {
                     thisASTNode = ASTNode("PRINT")
                 }
-                "DECLARATION" -> {
+                "declaration" -> {
                     thisASTNode = ASTNode("DEC")
                 }
                 else -> {
@@ -91,10 +91,6 @@ class SemanticAnalysis() {
                     }
                 }
             }
-
-
-
-
         }
         return thisASTNode ?: thisNotNode
     }
@@ -117,7 +113,4 @@ class SemanticAnalysis() {
             }
         }
     }
-
-
 }
-
