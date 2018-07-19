@@ -30,21 +30,22 @@ class SemanticAnalysis() {
         }
     }
 
+    /* comment */
     private fun makeAST(node: TreeNode): Any? {
-        var thisASTNode: ASTNode? = null
-        var thisNotNode: Any? = null
+        var currentASTNode: ASTNode? = null
+        var thisLeaf: Any? = null
         if (node.item == null) {
             if (node.data != null && node.data is Token) {
                 var token = node.data
                 when (token.type) {
                     TokenType.NUMBER -> {
-                        thisNotNode = token.numericValue ?: token.floatValue
+                        thisLeaf = token.numericValue ?: token.floatValue
                     }
                     TokenType.IDENTIFIER -> {
-                        thisNotNode = VarNode(token.stringData!!, "int32")
+                        thisLeaf = VarNode(token.stringData!!, "int32")
                     }
                     TokenType.STRING -> {
-                        thisNotNode = token.stringData
+                        thisLeaf = token.stringData
                     }
                     else -> {
                     }
@@ -53,50 +54,46 @@ class SemanticAnalysis() {
         } else {
             when (node.item!!.rule.firstSymbol.id) {
                 "START", "STATEMENTS" -> {
-                    thisASTNode = ASTNode("SEQ")
+                    currentASTNode = ASTNode("SEQ")
                 }
                 "ADD" -> {
-                    thisASTNode = ASTNode("ADD")
+                    currentASTNode = ASTNode("ADD")
                 }
                 "MUL" -> {
-                    thisASTNode = ASTNode("MUL")
+                    currentASTNode = ASTNode("MUL")
                 }
                 "ASSIGNMENT" -> {
-                    thisASTNode = ASTNode("ASS")
+                    currentASTNode = ASTNode("ASS")
                 }
                 "PRINT" -> {
-                    thisASTNode = ASTNode("PRINT")
+                    currentASTNode = ASTNode("PRINT")
                 }
                 "DECLARATION" -> {
-                    thisASTNode = ASTNode("DEC")
+                    currentASTNode = ASTNode("DEC")
                 }
                 else -> {
-                    println("UNHANDLED SYMBOL ${node.item!!.rule.firstSymbol.id}")
+                    println("UNHANDLED AST THING ${node.item!!.rule.firstSymbol.id}")
                 }
             }
 
-            if (thisASTNode != null) {
+            if (currentASTNode != null) {
                 for (i in 0 until node.children.size) {
                     var result = makeAST(node.children[i])
                     if (result != null) {
-                        thisASTNode.children.add(result)
+                        currentASTNode.children.add(result)
                     }
                 }
-                when(thisASTNode.type){
+                when(currentASTNode.type){
                     "DEC" -> {
-                        thisASTNode.metaNode = thisASTNode.children[0]
-                        thisASTNode.children.removeAt(0)
+                        currentASTNode.metaNode = currentASTNode.children[0]
+                        currentASTNode.children.removeAt(0)
                     }
                     else -> {
                     }
                 }
             }
-
-
-
-
         }
-        return thisASTNode ?: thisNotNode
+        return currentASTNode ?: thisLeaf
     }
 
     private fun getVariables(node: Any, results: ArrayList<VarNode>) {

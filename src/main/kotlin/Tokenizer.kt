@@ -8,6 +8,9 @@ class Tokenizer {
 
     var tokens = ArrayList<Token>()
 
+    var row = 0
+    var col = 0
+
     fun tokenize(file: String) : List<Token> {
 
         charArray = file.toCharArray()
@@ -25,6 +28,7 @@ class Tokenizer {
         return when {
             charArray[index] == ';' -> {
                 index++
+                col++
                 Token(TokenType.SEMICOLON)
             }
 
@@ -32,6 +36,7 @@ class Tokenizer {
                 stringBuilder = StringBuilder()
                 stringBuilder.append(charArray[index])
                 index++
+                col++
                 proccessIdentifier()
             }
 
@@ -39,42 +44,58 @@ class Tokenizer {
                 stringBuilder = StringBuilder()
                 stringBuilder.append(charArray[index])
                 index++
+                col++
                 proccessNumber()
             }
 
             charArray[index] == '=' -> {
                 index++
+                col++
                 Token(TokenType.ASSIGNMENT)
             }
 
             charArray[index] == '+' -> {
                 index++
+                col++
                 Token(TokenType.ADD)
             }
 
             charArray[index] == '*' -> {
                 index++
+                col++
                 Token(TokenType.MUL)
             }
 
             charArray[index] == '(' -> {
                 index++
+                col++
                 Token(TokenType.OPENPAREN)
             }
 
             charArray[index] == ')' -> {
                 index++
+                col++
                 Token(TokenType.CLOSEPAREN)
             }
 
             charArray[index] == '"' -> {
                 stringBuilder = StringBuilder()
                 index++
+                col++
                 proccessString()
             }
 
             else -> {
                 var xxx = charArray[index]
+                if (!xxx.isWhitespace()){
+                    println("unknown symbol at line ${row+1}, character ${col+1}")
+                }
+                if (xxx == '\n'){
+                    col = 0
+                    row++
+                }else{
+                    col++
+                }
                 index++
                 null
             }
@@ -86,6 +107,7 @@ class Tokenizer {
             charArray[index].isLetterOrDigit() || charArray[index] == '_' -> {
                 stringBuilder.append(charArray[index])
                 index++
+                col++
                 proccessIdentifier()
             }
 
@@ -114,6 +136,7 @@ class Tokenizer {
             charArray[index].isDigit()-> {
                 stringBuilder.append(charArray[index])
                 index++
+                col++
                 proccessNumber()
             }
 
@@ -128,6 +151,7 @@ class Tokenizer {
         return when {
             charArray[index] == '"'-> {
                 index++
+                col++
                 val string = stringBuilder.toString()
                 Token(TokenType.STRING, string)
             }
@@ -135,6 +159,7 @@ class Tokenizer {
             else -> {
                 stringBuilder.append(charArray[index])
                 index++
+                col++
                 proccessString()
             }
         }
