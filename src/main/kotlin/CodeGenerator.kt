@@ -3,9 +3,14 @@ package com.mscottmcbee.kotlinsharp
 import com.mscottmcbee.kotlinsharp.parsing.TreeNode
 import com.mscottmcbee.kotlinsharp.semantics.AST
 import com.mscottmcbee.kotlinsharp.semantics.ASTNode
-import com.mscottmcbee.kotlinsharp.semantics.VarNode
+import com.mscottmcbee.kotlinsharp.semantics.SymbolTable
+//import com.mscottmcbee.kotlinsharp.semantics.VarNode
+import semantics.IdentifierData
 
 class CodeGenerator() {
+
+
+    var typeStack: ArrayList<String> = ArrayList()
 
     fun codegen(ast: AST): String {
         var s = """
@@ -33,13 +38,11 @@ extends [mscorlib]System.Object
 
     private fun locals(ast: AST): String {
         var result = ".locals init ("
-        for (i in 0 until ast.variables!!.size){
-            var varNode = ast.variables!![i]
-            result += "${varNode.type} ${varNode.id}"
-            if (i < ast.variables!!.size - 1){
-                result += ","
-            }
+
+        for (identData in SymbolTable.scopes[0].values){
+            result += "${identData.type} ${identData.name},\n"
         }
+        result = result.dropLast(2)
         result += ")\n"
         return result
     }
@@ -50,9 +53,7 @@ extends [mscorlib]System.Object
             ASTNode::class.java -> {
                 var n = node as ASTNode
                 for (childNode in n.children) {
-                    // if (childNode is ASTNode) {
                     c = recCodeGen(c, childNode)
-                    //}
                 }
                 when (n.type) {
                     "ADD" -> {
@@ -62,21 +63,31 @@ extends [mscorlib]System.Object
                         c += "mul \n"
                     }
                     "PRINT" -> {
-                       c += "call void [mscorlib]System.Console::WriteLine(int32)\n"
+                       c += "call void [mscorlib]System.Console::WriteLine(${typeStack.removeAt(typeStack.count()-1)})\n"
                     }
                     "DEC" -> {
-                        c += "stloc ${(n.metaNode!! as VarNode).id}\n"
+                        c += "stloc ${(n.metaNode!! as IdentifierData).name}\n"
+                        typeStack.removeAt(typeStack.count()-1)
                     }
+                    "SEQ"->{}
                     else -> {
                         println("Unhandled ast node type ${n.type}")
                     }
                 }
             }
             Integer::class.java -> {
+                typeStack.add("int32")
                 c += "ldc.i4 $node\n"
             }
-            VarNode::class.java -> {
-                c += "ldloc ${(node as VarNode).id}\n"
+            String::class.java -> {
+                typeStack.add("string")
+                c += "ldstr \"$node\"\n"
+            }
+            TreeNode::class.java ->{
+                val ident = ((node as TreeNode).data as Token).stringData!!
+                val identData = SymbolTable.getSymbol(ident)
+                typeStack.add(identData!!.type)
+                c += "ldloc $ident\n"
             }
 
             else -> {

@@ -17,7 +17,7 @@ class Parser(private val tokens:List<Token>, private val data:ArrayList<ArrayLis
 
         if (start != null) {
             var node = search(0, start,0)
-            return node!!
+            return node
         }
         return null
     }
@@ -40,6 +40,7 @@ class Parser(private val tokens:List<Token>, private val data:ArrayList<ArrayLis
                                 var newNode = search(y, newItem, w+1)
                                 if (newNode == null) {
                                     println("Broke")
+                                    return null
                                 }
                                 node.children.add(newNode!!)
                                 y = newItem.setIndex
@@ -50,6 +51,7 @@ class Parser(private val tokens:List<Token>, private val data:ArrayList<ArrayLis
                                 var newNode = search(y, newItem, w+1)
                                 if (newNode == null) {
                                     println("Broke")
+                                    return null
                                 }
                                 node.children.add(newNode!!)
                                 y = newItem.setIndex
@@ -58,6 +60,9 @@ class Parser(private val tokens:List<Token>, private val data:ArrayList<ArrayLis
                     }
                 }
             } else if (symbol is Token) {
+                if (y >= tokens.count()){
+                    return null
+                }
                 node.children.add(TreeNode(null, ArrayList(),tokens[y]))
                 y += 1
             }

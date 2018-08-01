@@ -13,10 +13,10 @@ class SemanticAnalysis() {
         var ast = AST()
         ast.root = astRoot as ASTNode
 
-        var variables = ArrayList<VarNode>()
-        getVariables(ast.root as ASTNode, variables)
-        ast.variables = variables
+        SymbolTable.start()
 
+        buildSymbolTable((ast.root) as Any)
+        asd(ast.root as Any)
         return ast
     }
 
@@ -42,9 +42,9 @@ class SemanticAnalysis() {
                         thisLeaf = token.numericValue ?: token.floatValue
                     }
                     TokenType.IDENTIFIER -> {
-                        thisLeaf = VarNode(token.stringData!!, "int32")
+                        thisLeaf = node
                     }
-                    TokenType.STRING -> {
+                    TokenType.STRING, TokenType.IDENTIFIER -> {
                         thisLeaf = token.stringData
                     }
                     else -> {
@@ -53,22 +53,22 @@ class SemanticAnalysis() {
             }
         } else {
             when (node.item!!.rule.firstSymbol.id) {
-                "START", "STATEMENTS" -> {
+                "start", "statements" -> {
                     currentASTNode = ASTNode("SEQ")
                 }
-                "ADD" -> {
+                "add" -> {
                     currentASTNode = ASTNode("ADD")
                 }
-                "MUL" -> {
+                "mul" -> {
                     currentASTNode = ASTNode("MUL")
                 }
-                "ASSIGNMENT" -> {
+                "assignment" -> {
                     currentASTNode = ASTNode("ASS")
                 }
-                "PRINT" -> {
+                "print" -> {
                     currentASTNode = ASTNode("PRINT")
                 }
-                "DECLARATION" -> {
+                "declaration" -> {
                     currentASTNode = ASTNode("DEC")
                 }
                 else -> {
@@ -85,8 +85,8 @@ class SemanticAnalysis() {
                 }
                 when(currentASTNode.type){
                     "DEC" -> {
-                        currentASTNode.metaNode = currentASTNode.children[0]
-                        currentASTNode.children.removeAt(0)
+                //        currentASTNode.metaNode = currentASTNode.children[0]
+                 //       currentASTNode.children.removeAt(0)
                     }
                     else -> {
                     }
@@ -96,22 +96,68 @@ class SemanticAnalysis() {
         return currentASTNode ?: thisLeaf
     }
 
-    private fun getVariables(node: Any, results: ArrayList<VarNode>) {
+    fun buildSymbolTable(node: Any){
         when (node.javaClass) {
             ASTNode::class.java -> {
-                var n = node as ASTNode
-                for (childNode in n.children) {
-                    getVariables(childNode, results)
-                }
-            }
-            VarNode::class.java -> {
-                var vNode = node as VarNode
-                if (!results.contains(vNode)) {
-                    results.add(vNode)
+                var astNode:ASTNode = node as ASTNode
+                when (astNode.type) {
+                    "DEC" -> {
+                        var ident:String = ((astNode.children[0] as TreeNode).data as Token).stringData!!
+                        SymbolTable.addItem(ident)
+                        var typeString = findType(astNode.children[1])
+                        SymbolTable.specifyType(ident,typeString)
+                    }
+                    else -> {
+                        for (childNode in astNode.children) {
+                            buildSymbolTable(childNode)
+                        }
+                    }
                 }
             }
             else -> {
             }
         }
     }
+
+
+    private fun asd(node: Any) {
+        when (node.javaClass) {
+            ASTNode::class.java -> {
+                var n = node as ASTNode
+                if (n.type == "DEC"){
+                    n.metaNode = SymbolTable.getSymbol(((node.children[0] as TreeNode).data as Token).stringData!!)!!
+                    n.children = arrayListOf(n.children[1])
+                    var x = 12;
+                }else {
+                    for (childNode in n.children) {
+                        asd(childNode)
+                    }
+                }
+            }
+        }
+    }
+
+    fun findType(node: Any):String{
+        when (node.javaClass) {
+            Integer::class.java -> {
+                return "int32"
+            }
+            TreeNode::class.java -> {
+                var identData = SymbolTable.getSymbol(((node as TreeNode).data as Token).stringData!!)
+                return identData?.type ?: "string"
+                //return "string"
+            }
+            String::class.java -> {
+                var identData = SymbolTable.getSymbol(node as String)
+                return identData?.type ?: "string"
+            }
+            ASTNode::class.java -> {
+                return findType((node as ASTNode).children[0])
+            }
+        }
+
+
+        return ""
+    }
+
 }

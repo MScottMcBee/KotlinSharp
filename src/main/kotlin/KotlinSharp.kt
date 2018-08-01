@@ -42,6 +42,11 @@ class KotlinSharp {
             var parser = Parser(tokens, earleyData)
 
             var node: TreeNode? = parser.parse(start)
+            if (node == null){
+
+                println("Failed to parse!")
+                return
+            }
 
             var analyzer: SemanticAnalysis = SemanticAnalysis()
             var ast = analyzer.analyze(node!!)

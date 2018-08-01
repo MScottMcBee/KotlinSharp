@@ -71,7 +71,7 @@ statements =
 
 repeatingSemi =
     T(${TokenType.SEMICOLON}) |
-    T(${TokenType.SEMICOLON}) repeatingSemi |
+    T(${TokenType.SEMICOLON}) repeatingSemi
 ;
 
 statement =
@@ -94,7 +94,7 @@ print =
 
 expression =
     atomicExpression |
-    add |
+    add
 ;
 
 add =

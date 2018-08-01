@@ -1,3 +1,3 @@
-package com.mscottmcbee.kotlinsharp.semantics
+/*package com.mscottmcbee.kotlinsharp.semantics
 
-data class VarNode(var id:String, var type:String)
+data class VarNode(var id:String, var type:String)*/
